@@ -4,7 +4,7 @@
   "description": "سجّل حضورك وانصرافك واحسب ساعات عملك ومسحوباتك وصافي راتبك",
   "lang": "ar",
   "dir": "rtl",
-  "start_url": "/",
+  "start_url": "/attendance",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",

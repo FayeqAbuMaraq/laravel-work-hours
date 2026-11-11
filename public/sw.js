@@ -11,7 +11,13 @@ const PRECACHE = [OFFLINE_URL, '/icons/icon-192.png', '/icons/icon-512.png', '/j
 const CDN_HOSTS = ['cdn.tailwindcss.com', 'unpkg.com', 'fonts.googleapis.com', 'fonts.gstatic.com'];
 
 self.addEventListener('install', (event) => {
-    event.waitUntil(caches.open(STATIC).then((cache) => cache.addAll(PRECACHE)));
+    // نخزّن كل ملف على حدة: لو ملف واحد فشل (مفقود أو رجّعت الاستضافة صفحة غير متوقعة)
+    // ما نفشل تثبيت الـ service worker كله (addAll كانت تفشل بالكامل لو ملف واحد فشل).
+    event.waitUntil(
+        caches.open(STATIC).then((cache) =>
+            Promise.all(PRECACHE.map((url) => cache.add(url).catch(() => null)))
+        )
+    );
     self.skipWaiting();
 });
 
@@ -51,7 +57,14 @@ self.addEventListener('fetch', (event) => {
             );
             return;
         }
-        event.respondWith(fetch(req).catch(() => caches.match(OFFLINE_URL)));
+        // نقاط الدخول (الرئيسية، أيام العمل، الدخول): أوفلاين نعرض صفحة الحضور المخزّنة إن وُجدت
+        const entry = ['/', '/work-days', '/login'].includes(url.pathname);
+        event.respondWith(
+            fetch(req).catch(() =>
+                (entry ? caches.match('/attendance', { cacheName: PAGES }) : Promise.resolve(null))
+                    .then((hit) => hit || caches.match(OFFLINE_URL))
+            )
+        );
         return;
     }
 
