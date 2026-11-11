@@ -6,7 +6,7 @@
 
     @include('partials.summary-cards', ['totals' => $totals])
 
-    {{-- ===== تسجيل الحضور والانصراف ===== --}}
+    {{-- ===== تسجيل الحضور والانصراف  --}}
     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
         @if($openSession)
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
