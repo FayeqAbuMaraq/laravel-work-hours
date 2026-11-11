@@ -8,18 +8,23 @@ use Illuminate\Support\Str;
 
 class AttendanceController extends Controller
 {
-    /** صفحة الحضور والانصراف (خفيفة وبدون أي أرقام مالية، وتُخزَّن للعمل بدون إنترنت) */
-    public function index(Request $request)
-    {
-        $open = $request->user()->workDays()->whereNull('ended_at')->latest('started_at')->first();
+public function index(Request $request)
+{
+    $open = $request->user()->workDays()
+        ->whereNull('ended_at')
+        ->latest('started_at')
+        ->first();
 
-        // جلسة مفتوحة قديمة بدون uuid (مثلاً أُضيفت يدوياً): نعطيها واحداً ليتمكن الجهاز من إغلاقها
-        if ($open && ! $open->client_uuid) {
-            $open->update(['client_uuid' => (string) Str::uuid()]);
-        }
-
-        return view('attendance.index', ['openSession' => $open]);
+    if ($open && ! $open->client_uuid) {
+        $open->update(['client_uuid' => (string) Str::uuid()]);
     }
+
+    return view('attendance.index', [
+        'openSession' => $open,
+        // تمرير الوقت الحالي بتوقيت غزة لمزامنته مع واجهة المستخدم (JavaScript)
+        'gazaNow' => now('Asia/Gaza')->toIso8601String(), 
+    ]);
+}
 
     /** توكن CSRF جديد: تحتاجه المزامنة لأن الصفحة المخزّنة بالكاش قد يكون توكنها قديم */
     public function token()
