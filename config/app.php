@@ -65,7 +65,7 @@ return [
     |
     */
 
-'timezone' => '+02:00',
+    'timezone' => 'Asia/Gaza',
 
 
     /*
