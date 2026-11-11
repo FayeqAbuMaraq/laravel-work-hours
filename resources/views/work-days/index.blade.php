@@ -18,7 +18,7 @@
                     <div>
                         <p class="font-bold">أنت الآن على رأس عملك</p>
                         <p class="text-sm text-slate-500">
-                            دخلت: {{ $openSession->date_label }} - {{ $openSession->start_label }}
+                                   دخلت: {{ $openSession->started_at->timezone('Etc/GMT-2')->format('Y-m-d - h:i A') }}
                             · المدة: <span id="elapsed-timer" data-start="{{ $openSession->started_at->toIso8601String() }}" class="font-bold text-slate-700" dir="ltr">00:00:00</span>
                         </p>
                     </div>
